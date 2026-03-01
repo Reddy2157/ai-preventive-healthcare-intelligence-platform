@@ -1,8 +1,9 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useMemo } from "react";
+import { Download, Users, TrendingUp, AlertTriangle, Activity } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -10,175 +11,141 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useGetAllRecords } from '@/hooks/useQueries';
-import { exportRecordsToCSV } from '@/utils/csvExport';
-import { LayoutDashboard, Download, RefreshCw, Database } from 'lucide-react';
-import type { HealthRecord } from '../backend';
+} from "@/components/ui/table";
+import { useGetAllRecords } from "@/hooks/useQueries";
+import { exportRecordsToCSV } from "@/utils/csvExport";
+import { Gender, RiskLevel } from "../backend";
 
-function getRiskLevel(score: number): 'LOW' | 'MODERATE' | 'HIGH' {
-  if (score < 40) return 'LOW';
-  if (score < 75) return 'MODERATE';
-  return 'HIGH';
+function RiskBadge({ level }: { level: RiskLevel }) {
+  if (level === RiskLevel.high) {
+    return <Badge className="bg-health-red/20 text-health-red border-health-red/30">High</Badge>;
+  }
+  if (level === RiskLevel.moderate) {
+    return <Badge className="bg-health-amber/20 text-health-amber border-health-amber/30">Moderate</Badge>;
+  }
+  return <Badge className="bg-health-green/20 text-health-green border-health-green/30">Low</Badge>;
 }
 
-function RiskBadge({ score }: { score: number }) {
-  const level = getRiskLevel(score);
-  if (level === 'LOW') return <Badge className="bg-risk-low border-risk-low risk-low border text-xs font-semibold">LOW</Badge>;
-  if (level === 'MODERATE') return <Badge className="bg-risk-moderate border-risk-moderate risk-moderate border text-xs font-semibold">MODERATE</Badge>;
-  return <Badge className="bg-risk-high border-risk-high risk-high border text-xs font-semibold">HIGH</Badge>;
-}
+export default function Dashboard() {
+  const { data: records = [], isLoading } = useGetAllRecords();
 
-function formatTimestamp(ts: bigint): string {
-  const ms = Number(ts / BigInt(1_000_000));
-  return new Date(ms).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-  });
-}
-
-function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
-  return (
-    <Card className="shadow-card">
-      <CardContent className="py-4 px-5">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</p>
-        <p className="text-2xl font-display font-bold text-foreground mt-1">{value}</p>
-        {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
-      </CardContent>
-    </Card>
-  );
-}
-
-export function Dashboard() {
-  const { data: records, isLoading, refetch, isFetching } = useGetAllRecords();
-
-  const stats = React.useMemo(() => {
-    if (!records || records.length === 0) return null;
-    const scores = records.map((r) => r.riskScore);
-    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-    const high = records.filter((r) => r.riskScore >= 75).length;
-    const moderate = records.filter((r) => r.riskScore >= 40 && r.riskScore < 75).length;
-    const low = records.filter((r) => r.riskScore < 40).length;
-    return { avg, high, moderate, low, total: records.length };
+  const stats = useMemo(() => {
+    const total = records.length;
+    const highRisk = records.filter((r) => r.riskLevel === RiskLevel.high).length;
+    const moderate = records.filter((r) => r.riskLevel === RiskLevel.moderate).length;
+    const avgScore =
+      total > 0
+        ? records.reduce((sum, r) => sum + r.riskScore, 0) / total
+        : 0;
+    return { total, highRisk, moderate, avgScore };
   }, [records]);
 
+  const sorted = useMemo(
+    () => [...records].sort((a, b) => Number(b.timestamp - a.timestamp)),
+    [records]
+  );
+
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-start justify-between gap-4">
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground flex items-center gap-2">
-            <LayoutDashboard className="w-6 h-6 text-accent" />
-            Health Dashboard
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Overview of all patient risk assessments stored on-chain.
-          </p>
+          <h1 className="text-2xl font-bold text-foreground font-display">Health Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Overview of all patient risk assessments.</p>
         </div>
-        <div className="flex gap-2 shrink-0">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-            className="h-9"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${isFetching ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          {records && records.length > 0 && (
-            <Button
-              size="sm"
-              onClick={() => exportRecordsToCSV(records)}
-              className="h-9"
-            >
-              <Download className="w-3.5 h-3.5 mr-1.5" />
-              Export CSV
-            </Button>
-          )}
-        </div>
+        <Button
+          variant="outline"
+          onClick={() => exportRecordsToCSV(records)}
+          disabled={records.length === 0}
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Export CSV
+        </Button>
       </div>
 
       {/* Stats */}
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="Total Records" value={stats.total} sub="patients assessed" />
-          <StatCard label="Avg Risk Score" value={`${stats.avg.toFixed(1)}%`} sub="across all patients" />
-          <StatCard label="High Risk" value={stats.high} sub={`${((stats.high / stats.total) * 100).toFixed(0)}% of patients`} />
-          <StatCard label="Low Risk" value={stats.low} sub={`${((stats.low / stats.total) * 100).toFixed(0)}% of patients`} />
-        </div>
-      )}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Total Records", value: stats.total, icon: Users, color: "text-primary" },
+          { label: "High Risk", value: stats.highRisk, icon: AlertTriangle, color: "text-health-red" },
+          { label: "Moderate Risk", value: stats.moderate, icon: TrendingUp, color: "text-health-amber" },
+          { label: "Avg Risk Score", value: stats.avgScore.toFixed(1), icon: Activity, color: "text-health-green" },
+        ].map(({ label, value, icon: Icon, color }) => (
+          <Card key={label}>
+            <CardContent className="pt-4">
+              <div className="flex items-center gap-3">
+                <Icon className={`w-5 h-5 ${color}`} />
+                <div>
+                  <p className="text-xs text-muted-foreground">{label}</p>
+                  {isLoading ? (
+                    <Skeleton className="h-6 w-12 mt-1" />
+                  ) : (
+                    <p className="text-xl font-bold">{value}</p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       {/* Table */}
-      <Card className="shadow-card">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-display flex items-center gap-2">
-            <Database className="w-4 h-4 text-accent" />
-            Patient Records
-          </CardTitle>
-          <CardDescription className="text-xs">
-            {records ? `${records.length} record${records.length !== 1 ? 's' : ''} stored on-chain` : 'Loading records...'}
-          </CardDescription>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">All Records</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-6 space-y-3">
-              {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full rounded-lg" />
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
               ))}
             </div>
-          ) : !records || records.length === 0 ? (
-            <div className="text-center py-16 px-6">
-              <Database className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-sm font-medium text-muted-foreground">No records yet</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">
-                Submit a risk assessment to see data here
-              </p>
+          ) : sorted.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <Activity className="w-10 h-10 mb-3 opacity-30" />
+              <p className="text-sm">No records yet. Add a patient assessment to get started.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent border-b border-border">
-                    <TableHead className="text-xs font-semibold text-muted-foreground pl-6">Patient</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground">Age</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground">BMI</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground">BP</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground">Glucose</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground">Hgb</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground">Chol.</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground">Risk Score</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground">Level</TableHead>
-                    <TableHead className="text-xs font-semibold text-muted-foreground pr-6">Date</TableHead>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Demographics</TableHead>
+                  <TableHead>BMI</TableHead>
+                  <TableHead>BP</TableHead>
+                  <TableHead>Glucose</TableHead>
+                  <TableHead>Cholesterol</TableHead>
+                  <TableHead>Risk Score</TableHead>
+                  <TableHead>Risk Level</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sorted.map((record, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                      {new Date(Number(record.timestamp) / 1_000_000).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm">
+                        {record.gender === Gender.male ? "Male" : "Female"},{" "}
+                        {record.age.toString()}y
+                        {record.isSmoker && (
+                          <span className="ml-1 text-xs text-muted-foreground">(smoker)</span>
+                        )}
+                      </span>
+                    </TableCell>
+                    <TableCell>{record.bmi.toFixed(1)}</TableCell>
+                    <TableCell>{record.bloodPressure.toString()}</TableCell>
+                    <TableCell>{record.glucose.toString()}</TableCell>
+                    <TableCell>{record.cholesterol.toString()}</TableCell>
+                    <TableCell>{record.riskScore.toFixed(1)}</TableCell>
+                    <TableCell>
+                      <RiskBadge level={record.riskLevel} />
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {records.map((record, idx) => (
-                    <TableRow key={idx} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="pl-6">
-                        <div>
-                          <p className="text-sm font-medium">{record.firstName} {record.lastName}</p>
-                          <p className="text-xs text-muted-foreground capitalize">{record.gender} {record.isSmoker ? '· Smoker' : ''}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm">{record.age.toString()}</TableCell>
-                      <TableCell className="text-sm">{record.bmi.toFixed(1)}</TableCell>
-                      <TableCell className="text-sm">{record.bloodPressure.toString()}</TableCell>
-                      <TableCell className="text-sm">{record.glucose.toString()}</TableCell>
-                      <TableCell className="text-sm">{record.hemoglobin.toFixed(1)}</TableCell>
-                      <TableCell className="text-sm">{record.cholesterol.toString()}</TableCell>
-                      <TableCell>
-                        <span className="text-sm font-semibold font-display">{record.riskScore.toFixed(1)}%</span>
-                      </TableCell>
-                      <TableCell>
-                        <RiskBadge score={record.riskScore} />
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground pr-6">
-                        {formatTimestamp(record.timestamp)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>

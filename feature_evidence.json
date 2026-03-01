@@ -2,10 +2,16 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-frontend-src-pages-riskpredictor-tsx-to-call-useaddrecord-on-successful-form-submission-passing-all-form-values-plus-the-computed-risk-score-and-risk-level-so-every-prediction-is-persisted-to-the-backend",
-      "featureTitle": "Update `frontend/src/pages/RiskPredictor.tsx` to call `useAddRecord` on successful form submission, passing all form values plus the computed risk score and risk level, so every prediction is persisted to the backend.",
+      "featureId": "feature-audit-and-fix-all-typescript-compilation-errors-in-the-frontend-so-the-build-pipeline-completes-successfully-specifically-ensure-frontend-src-hooks-usequeries-ts-correctly-maps-the-backend-candid-interface-for-addrecord-and-getallrecords-ensure-the-healthrecord-typescript-type-exactly-matches-all-backend-fields-and-ensure-riskpredictor-tsx-dashboard-tsx-history-tsx-and-xrayanalysis-tsx-all-compile-without-type-errors-the-npm-run-build-command-must-succeed-with-zero-errors",
+      "featureTitle": "Audit and fix all TypeScript compilation errors in the frontend so the build pipeline completes successfully. Specifically: ensure `frontend/src/hooks/useQueries.ts` correctly maps the backend Candid interface for `addRecord` and `getAllRecords`; ensure the `HealthRecord` TypeScript type exactly matches all backend fields; and ensure `RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`, and `XRayAnalysis.tsx` all compile without type errors. The `npm run build` command must succeed with zero errors.",
       "files": [
-        "frontend/src/pages/RiskPredictor.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/lib/riskCalculator.ts",
+        "frontend/src/pages/Dashboard.tsx",
+        "frontend/src/pages/History.tsx",
+        "frontend/src/pages/RiskPredictor.tsx",
+        "frontend/src/pages/XRayAnalysis.tsx",
+        "frontend/src/utils/csvExport.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -15,7 +21,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-10"
+        "REQ-15"
       ],
       "confidence": "high"
     }

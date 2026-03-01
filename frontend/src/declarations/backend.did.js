@@ -10,6 +10,11 @@ import { IDL } from '@icp-sdk/core/candid';
 
 export const Gender = IDL.Variant({ 'female' : IDL.Null, 'male' : IDL.Null });
 export const Time = IDL.Int;
+export const RiskLevel = IDL.Variant({
+  'low' : IDL.Null,
+  'high' : IDL.Null,
+  'moderate' : IDL.Null,
+});
 export const HealthRecord = IDL.Record({
   'age' : IDL.Nat,
   'bmi' : IDL.Float64,
@@ -19,17 +24,14 @@ export const HealthRecord = IDL.Record({
   'glucose' : IDL.Nat,
   'gender' : Gender,
   'timestamp' : Time,
-  'lastName' : IDL.Text,
+  'riskLevel' : RiskLevel,
   'riskScore' : IDL.Float64,
   'cholesterol' : IDL.Nat,
-  'firstName' : IDL.Text,
 });
 
 export const idlService = IDL.Service({
   'addRecord' : IDL.Func(
       [
-        IDL.Text,
-        IDL.Text,
         IDL.Nat,
         IDL.Float64,
         IDL.Nat,
@@ -51,6 +53,11 @@ export const idlInitArgs = [];
 export const idlFactory = ({ IDL }) => {
   const Gender = IDL.Variant({ 'female' : IDL.Null, 'male' : IDL.Null });
   const Time = IDL.Int;
+  const RiskLevel = IDL.Variant({
+    'low' : IDL.Null,
+    'high' : IDL.Null,
+    'moderate' : IDL.Null,
+  });
   const HealthRecord = IDL.Record({
     'age' : IDL.Nat,
     'bmi' : IDL.Float64,
@@ -60,17 +67,14 @@ export const idlFactory = ({ IDL }) => {
     'glucose' : IDL.Nat,
     'gender' : Gender,
     'timestamp' : Time,
-    'lastName' : IDL.Text,
+    'riskLevel' : RiskLevel,
     'riskScore' : IDL.Float64,
     'cholesterol' : IDL.Nat,
-    'firstName' : IDL.Text,
   });
   
   return IDL.Service({
     'addRecord' : IDL.Func(
         [
-          IDL.Text,
-          IDL.Text,
           IDL.Nat,
           IDL.Float64,
           IDL.Nat,

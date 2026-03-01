@@ -98,35 +98,39 @@ export interface HealthRecord {
     glucose: bigint;
     gender: Gender;
     timestamp: Time;
-    lastName: string;
+    riskLevel: RiskLevel;
     riskScore: number;
     cholesterol: bigint;
-    firstName: string;
 }
 export type Time = bigint;
 export enum Gender {
     female = "female",
     male = "male"
 }
+export enum RiskLevel {
+    low = "low",
+    high = "high",
+    moderate = "moderate"
+}
 export interface backendInterface {
-    addRecord(firstName: string, lastName: string, age: bigint, bmi: number, bloodPressure: bigint, glucose: bigint, hemoglobin: number, cholesterol: bigint, gender: Gender, isSmoker: boolean): Promise<string>;
+    addRecord(age: bigint, bmi: number, bloodPressure: bigint, glucose: bigint, hemoglobin: number, cholesterol: bigint, gender: Gender, isSmoker: boolean): Promise<string>;
     getAllRecords(): Promise<Array<HealthRecord>>;
     getRecordById(recordId: string): Promise<HealthRecord>;
 }
-import type { Gender as _Gender, HealthRecord as _HealthRecord, Time as _Time } from "./declarations/backend.did.d.ts";
+import type { Gender as _Gender, HealthRecord as _HealthRecord, RiskLevel as _RiskLevel, Time as _Time } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async addRecord(arg0: string, arg1: string, arg2: bigint, arg3: number, arg4: bigint, arg5: bigint, arg6: number, arg7: bigint, arg8: Gender, arg9: boolean): Promise<string> {
+    async addRecord(arg0: bigint, arg1: number, arg2: bigint, arg3: bigint, arg4: number, arg5: bigint, arg6: Gender, arg7: boolean): Promise<string> {
         if (this.processError) {
             try {
-                const result = await this.actor.addRecord(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, to_candid_Gender_n1(this._uploadFile, this._downloadFile, arg8), arg9);
+                const result = await this.actor.addRecord(arg0, arg1, arg2, arg3, arg4, arg5, to_candid_Gender_n1(this._uploadFile, this._downloadFile, arg6), arg7);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addRecord(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, to_candid_Gender_n1(this._uploadFile, this._downloadFile, arg8), arg9);
+            const result = await this.actor.addRecord(arg0, arg1, arg2, arg3, arg4, arg5, to_candid_Gender_n1(this._uploadFile, this._downloadFile, arg6), arg7);
             return result;
         }
     }
@@ -165,6 +169,9 @@ function from_candid_Gender_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint
 function from_candid_HealthRecord_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _HealthRecord): HealthRecord {
     return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
+function from_candid_RiskLevel_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _RiskLevel): RiskLevel {
+    return from_candid_variant_n9(_uploadFile, _downloadFile, value);
+}
 function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     age: bigint;
     bmi: number;
@@ -174,10 +181,9 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
     glucose: bigint;
     gender: _Gender;
     timestamp: _Time;
-    lastName: string;
+    riskLevel: _RiskLevel;
     riskScore: number;
     cholesterol: bigint;
-    firstName: string;
 }): {
     age: bigint;
     bmi: number;
@@ -187,10 +193,9 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
     glucose: bigint;
     gender: Gender;
     timestamp: Time;
-    lastName: string;
+    riskLevel: RiskLevel;
     riskScore: number;
     cholesterol: bigint;
-    firstName: string;
 } {
     return {
         age: value.age,
@@ -201,10 +206,9 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
         glucose: value.glucose,
         gender: from_candid_Gender_n6(_uploadFile, _downloadFile, value.gender),
         timestamp: value.timestamp,
-        lastName: value.lastName,
+        riskLevel: from_candid_RiskLevel_n8(_uploadFile, _downloadFile, value.riskLevel),
         riskScore: value.riskScore,
-        cholesterol: value.cholesterol,
-        firstName: value.firstName
+        cholesterol: value.cholesterol
     };
 }
 function from_candid_variant_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -213,6 +217,15 @@ function from_candid_variant_n7(_uploadFile: (file: ExternalBlob) => Promise<Uin
     male: null;
 }): Gender {
     return "female" in value ? Gender.female : "male" in value ? Gender.male : value;
+}
+function from_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    low: null;
+} | {
+    high: null;
+} | {
+    moderate: null;
+}): RiskLevel {
+    return "low" in value ? RiskLevel.low : "high" in value ? RiskLevel.high : "moderate" in value ? RiskLevel.moderate : value;
 }
 function from_candid_vec_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_HealthRecord>): Array<HealthRecord> {
     return value.map((x)=>from_candid_HealthRecord_n4(_uploadFile, _downloadFile, x));

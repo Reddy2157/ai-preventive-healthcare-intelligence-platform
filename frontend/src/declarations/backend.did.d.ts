@@ -21,26 +21,17 @@ export interface HealthRecord {
   'glucose' : bigint,
   'gender' : Gender,
   'timestamp' : Time,
-  'lastName' : string,
+  'riskLevel' : RiskLevel,
   'riskScore' : number,
   'cholesterol' : bigint,
-  'firstName' : string,
 }
+export type RiskLevel = { 'low' : null } |
+  { 'high' : null } |
+  { 'moderate' : null };
 export type Time = bigint;
 export interface _SERVICE {
   'addRecord' : ActorMethod<
-    [
-      string,
-      string,
-      bigint,
-      number,
-      bigint,
-      bigint,
-      number,
-      bigint,
-      Gender,
-      boolean,
-    ],
+    [bigint, number, bigint, bigint, number, bigint, Gender, boolean],
     string
   >,
   'getAllRecords' : ActorMethod<[], Array<HealthRecord>>,

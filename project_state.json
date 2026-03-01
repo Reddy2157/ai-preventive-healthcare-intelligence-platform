@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
+  "projectStateVersion": 9,
   "summary": "AI Preventive Healthcare Intelligence Platform - a web-based dashboard featuring health risk prediction (using patient vitals like age, BMI, blood pressure, glucose), chest X-ray analysis, health tips, and prediction history tracking.",
   "architectural_notes": [
     "Multi-page navigation: Risk Predictor, X-Ray Analysis, Dashboard, History",
@@ -8,9 +8,10 @@
     "ML inference should be simulated on frontend since no backend model files are available"
   ],
   "known_issues": [
-    "Build has failed multiple times; simplify scope to core health risk input form and dashboard"
+    "Build has failed multiple times; simplify scope to core health risk input form and dashboard",
+    "App deployment failing - user reports app is not deployed at all"
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-build-a-multi-page-frontend-application-with-a-sidebar-navigation-containing-four-pages-risk-predictor-x-ray-analysis-dashboard-and-history",
@@ -65,6 +66,22 @@
       "title": "Update `frontend/src/pages/RiskPredictor.tsx` to call `useAddRecord` on successful form submission, passing all form values plus the computed risk score and risk level, so every prediction is persisted to the backend.",
       "reqIds": [
         "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-audit-and-fix-all-typescript-build-errors-in-the-frontend-that-are-causing-the-deployment-pipeline-to-fail-ensure-frontend-src-hooks-usequeries-ts-correctly-maps-the-backend-candid-interface-for-addrecord-and-getallrecords-that-the-healthrecord-typescript-type-exactly-matches-all-backend-fields-and-that-all-pages-riskpredictor-tsx-dashboard-tsx-history-tsx-compile-without-type-errors",
+      "title": "Audit and fix all TypeScript/build errors in the frontend that are causing the deployment pipeline to fail. Ensure `frontend/src/hooks/useQueries.ts` correctly maps the backend Candid interface for `addRecord` and `getAllRecords`, that the `HealthRecord` TypeScript type exactly matches all backend fields, and that all pages (`RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`) compile without type errors.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-audit-and-fix-all-typescript-compilation-errors-in-the-frontend-so-the-build-pipeline-completes-successfully-specifically-ensure-frontend-src-hooks-usequeries-ts-correctly-maps-the-backend-candid-interface-for-addrecord-and-getallrecords-ensure-the-healthrecord-typescript-type-exactly-matches-all-backend-fields-and-ensure-riskpredictor-tsx-dashboard-tsx-history-tsx-and-xrayanalysis-tsx-all-compile-without-type-errors-the-npm-run-build-command-must-succeed-with-zero-errors",
+      "title": "Audit and fix all TypeScript compilation errors in the frontend so the build pipeline completes successfully. Specifically: ensure `frontend/src/hooks/useQueries.ts` correctly maps the backend Candid interface for `addRecord` and `getAllRecords`; ensure the `HealthRecord` TypeScript type exactly matches all backend fields; and ensure `RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`, and `XRayAnalysis.tsx` all compile without type errors. The `npm run build` command must succeed with zero errors.",
+      "reqIds": [
+        "REQ-15"
       ],
       "version": 1
     }
@@ -129,6 +146,22 @@
       "summary": "Update `frontend/src/pages/Dashboard.tsx` and `frontend/src/pages/History.tsx` to load records via `useGetAllRecords` from the backend instead of any local in-memory state. Both pages should display live persisted data that survives page refreshes.",
       "reqIds": [
         "REQ-11"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Audit and fix all compilation errors in `backend/main.mo` and `backend/migration.mo` that are causing deployment failures. Ensure the Motoko actor compiles cleanly: stable storage declarations are correct, all imported modules resolve, and the `addRecord`/`getAllRecords`/`getRecordById` endpoints have valid type signatures matching the HealthRecord shape (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, smoker, riskScore, riskLevel, timestamp).",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Audit and fix all compilation errors in `backend/main.mo` and `backend/migration.mo` so the Motoko actor compiles cleanly. Verify that: stable storage declarations are syntactically correct, all imported modules resolve, and the `addRecord`, `getAllRecords`, and `getRecordById` endpoints have valid type signatures matching the HealthRecord shape (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, smoker, riskScore, riskLevel, timestamp). The backend must compile without errors before deployment.",
+      "reqIds": [
+        "REQ-14"
       ],
       "status": "pending"
     }

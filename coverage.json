@@ -1,63 +1,62 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T18:21:16.468Z",
+  "generatedAt": "2026-03-01T18:42:09.156Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
+    "total": 2,
     "implemented": 1,
     "items": [
       {
-        "id": "REQ-10",
-        "summary": "Update `frontend/src/pages/RiskPredictor.tsx` to call `useAddRecord` on successful form submission, passing all form values plus the computed risk score and risk level, so every prediction is persisted to the backend.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/RiskPredictor.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/RiskPredictor.tsx"
-        ]
-      },
-      {
-        "id": "REQ-11",
-        "summary": "Update `frontend/src/pages/Dashboard.tsx` and `frontend/src/pages/History.tsx` to load records via `useGetAllRecords` from the backend instead of any local in-memory state. Both pages should display live persisted data that survives page refreshes.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/Dashboard.tsx",
-          "frontend/src/pages/History.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Ensure the Motoko backend actor uses stable storage (stable var or StableHashMap) for all health records so that data persists across canister upgrades and page refreshes. The actor must expose: (1) an update function `addRecord` that accepts all risk predictor fields (age, BMI, blood pressure, glucose, hemoglobin, cholesterol, gender, smoker, computed risk score, risk level, and a timestamp) and stores the record, and (2) a query function `getAllRecords` that returns all stored records in reverse-chronological order.",
+        "id": "REQ-14",
+        "summary": "Audit and fix all compilation errors in `backend/main.mo` and `backend/migration.mo` so the Motoko actor compiles cleanly. Verify that: stable storage declarations are syntactically correct, all imported modules resolve, and the `addRecord`, `getAllRecords`, and `getRecordById` endpoints have valid type signatures matching the HealthRecord shape (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, smoker, riskScore, riskLevel, timestamp). The backend must compile without errors before deployment.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-9",
-        "summary": "Update the `useAddRecord` and `useGetAllRecords` React Query hooks in `frontend/src/hooks/useQueries.ts` to correctly map the backend's `addRecord` and `getAllRecords` Candid interfaces. Ensure the `HealthRecord` TypeScript type includes all fields returned by the backend (age, BMI, blood pressure, glucose, hemoglobin, cholesterol, gender, smoker, riskScore, riskLevel, timestamp).",
-        "status": "missing",
+        "id": "REQ-15",
+        "summary": "Audit and fix all TypeScript compilation errors in the frontend so the build pipeline completes successfully. Specifically: ensure `frontend/src/hooks/useQueries.ts` correctly maps the backend Candid interface for `addRecord` and `getAllRecords`; ensure the `HealthRecord` TypeScript type exactly matches all backend fields; and ensure `RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`, and `XRayAnalysis.tsx` all compile without type errors. The `npm run build` command must succeed with zero errors.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/RiskPredictor.tsx",
+          "frontend/src/pages/Dashboard.tsx",
+          "frontend/src/pages/History.tsx",
+          "frontend/src/pages/XRayAnalysis.tsx",
+          "frontend/src/utils/csvExport.ts",
+          "frontend/src/lib/riskCalculator.ts"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/RiskPredictor.tsx",
+          "frontend/src/pages/Dashboard.tsx",
+          "frontend/src/pages/History.tsx",
+          "frontend/src/pages/XRayAnalysis.tsx",
+          "frontend/src/utils/csvExport.ts",
+          "frontend/src/lib/riskCalculator.ts"
+        ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
-    "build-template/README.md",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/RiskGauge.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/lib/riskCalculator.ts",
+    "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/pages/History.tsx",
     "frontend/src/pages/RiskPredictor.tsx",
+    "frontend/src/pages/XRayAnalysis.tsx",
+    "frontend/src/utils/csvExport.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

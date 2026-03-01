@@ -1,62 +1,53 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add persistent history storage to backend and wire frontend to use it",
+  "title": "Fix deployment failures — resolve all build and compilation errors",
   "requirements": [
     {
-      "id": "REQ-9",
-      "summary": "Update React Query hooks to map backend addRecord and getAllRecords interfaces with complete HealthRecord type including all fields",
+      "id": "REQ-15",
+      "summary": "Audit and fix all TypeScript compilation errors in the frontend so the build pipeline completes successfully",
       "acceptanceCriteria": [
-        "`useAddRecord` mutation calls the backend `addRecord` function with all required fields.",
-        "`useGetAllRecords` query correctly fetches and deserializes all records from the backend.",
-        "TypeScript `HealthRecord` type matches the Candid-generated type with all fields present.",
-        "Query cache is invalidated and records list refreshes after a new record is added."
+        "`npm run build` completes successfully with no TypeScript errors.",
+        "`HealthRecord` type in `useQueries.ts` matches all fields returned by the backend.",
+        "`useAddRecord` and `useGetAllRecords` hooks correctly call the backend Candid methods.",
+        "All four page components (`RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`, `XRayAnalysis.tsx`) compile without errors.",
+        "No implicit `any` or missing property errors in the frontend build output."
       ],
       "file_operations": [
         {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Update `useAddRecord` mutation to accept and pass all required fields (firstName, lastName, age, BMI, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker) to the backend `addRecord` function. Update `useGetAllRecords` to correctly deserialize the complete HealthRecord type from backend including all fields (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker, riskScore, timestamp, firstName, lastName). Ensure the mutation invalidates the `getAllRecords` query cache on success so the records list refreshes automatically."
-        }
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "summary": "Wire RiskPredictor form submission to persist predictions via useAddRecord with all form values plus computed risk score and level",
-      "acceptanceCriteria": [
-        "After submitting the risk predictor form, a record is saved to the backend.",
-        "The saved record includes all input fields plus the computed risk score and risk level.",
-        "A loading indicator is shown while the save is in progress.",
-        "An error message is shown if the save fails."
-      ],
-      "file_operations": [
+          "description": "Fix the HealthRecord TypeScript type to exactly match the backend Candid interface fields. Ensure the type includes: age (bigint), bmi (number), bloodPressure (bigint), glucose (bigint), hemoglobin (number), cholesterol (bigint), gender (Gender enum), isSmoker (boolean), timestamp (Time/bigint), riskLevel (RiskLevel enum), and riskScore (number). Update useAddRecord to pass isSmoker parameter correctly to backend.addRecord. Verify useGetAllRecords correctly types the returned array of HealthRecord objects."
+        },
         {
           "path": "frontend/src/pages/RiskPredictor.tsx",
           "operation": "modify",
-          "description": "Import and call `useAddRecord` mutation on successful form submission. Pass all form values (firstName, lastName, age, BMI, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker) along with the computed riskScore and riskLevel to the mutation. Display a loading spinner or disabled state on the submit button while `addRecord` is pending. Show a success toast notification on successful save and an error alert if the mutation fails. Ensure the form remains usable after save completes."
-        }
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "summary": "Update Dashboard and History pages to load persisted records from backend via useGetAllRecords instead of local state",
-      "acceptanceCriteria": [
-        "Dashboard table populates with records fetched from the backend on page load.",
-        "History page cards populate with records fetched from the backend on page load.",
-        "Data is still present after a full browser page refresh.",
-        "A loading skeleton or spinner is shown while records are being fetched.",
-        "An empty-state message is shown when no records exist yet."
-      ],
-      "file_operations": [
+          "description": "Fix any TypeScript errors related to HealthRecord type mismatches. Ensure the component correctly passes all required parameters (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker) to the useAddRecord mutation hook. Verify that form field types align with the backend interface signature (bigint for age/bloodPressure/glucose/cholesterol, number for bmi/hemoglobin, boolean for isSmoker)."
+        },
         {
           "path": "frontend/src/pages/Dashboard.tsx",
           "operation": "modify",
-          "description": "Replace any local in-memory state management with `useGetAllRecords` query hook to fetch records from the backend. Display a loading skeleton or spinner while `isLoading` is true. Show an empty-state message when the records array is empty. Populate the statistics cards (Total Patients, High Risk Count, Avg Risk Score) and the data table with the fetched records. Ensure the refresh button refetches the query. Update CSV export to use the backend-fetched records."
+          "description": "Fix TypeScript errors by ensuring the component correctly types data returned from useGetAllRecords. Verify all HealthRecord fields are accessed with correct property names matching the backend interface (isSmoker instead of smoker if mismatched, riskLevel enum handling, bigint field conversions). Ensure the statistics calculations and table rendering handle all field types correctly without implicit any."
         },
         {
           "path": "frontend/src/pages/History.tsx",
           "operation": "modify",
-          "description": "Replace any local in-memory state management with `useGetAllRecords` query hook to fetch records from the backend. Display a loading spinner while `isLoading` is true. Show an empty-state message (e.g., 'No health records found. Submit a risk assessment to create your first record.') when the records array is empty. Render record cards from the fetched data, ensuring each card displays all fields (firstName, lastName, age, BMI, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker, riskScore, riskLevel, timestamp). Ensure records remain visible after a full page refresh."
+          "description": "Fix TypeScript errors by ensuring the component correctly types the array of HealthRecord objects from useGetAllRecords. Verify all property accesses match the backend interface field names (isSmoker, riskLevel enum values, bigint fields). Ensure timestamp sorting and display logic handles bigint Time values correctly."
+        },
+        {
+          "path": "frontend/src/pages/XRayAnalysis.tsx",
+          "operation": "modify",
+          "description": "Fix any TypeScript compilation errors in the component. Ensure all type declarations are explicit, file upload handling is properly typed, and the simulated classification result object has correct types. Verify no implicit any types remain."
+        },
+        {
+          "path": "frontend/src/utils/csvExport.ts",
+          "operation": "modify",
+          "description": "Update the exportRecordsToCSV function to handle the correct HealthRecord type from the backend interface. Ensure isSmoker boolean field is correctly formatted in CSV output, bigint fields (age, bloodPressure, glucose, cholesterol, timestamp) are converted to strings or numbers as appropriate, and RiskLevel enum values are properly stringified."
+        },
+        {
+          "path": "frontend/src/lib/riskCalculator.ts",
+          "operation": "modify",
+          "description": "Verify the calculateRiskScore function parameter types match the form inputs and backend interface. Ensure the function accepts isSmoker as boolean and returns a result compatible with the HealthRecord riskScore (number) and riskLevel (RiskLevel enum) fields. Fix any type mismatches."
         }
       ]
     }

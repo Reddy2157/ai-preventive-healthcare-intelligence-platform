@@ -1,141 +1,115 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useGetAllRecords } from '@/hooks/useQueries';
-import { History as HistoryIcon, Activity, ClipboardList } from 'lucide-react';
-import type { HealthRecord } from '../backend';
+import { useMemo } from "react";
+import { Clock, Activity, User } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetAllRecords } from "@/hooks/useQueries";
+import { Gender, RiskLevel } from "../backend";
 
-function getRiskLevel(score: number): 'LOW' | 'MODERATE' | 'HIGH' {
-  if (score < 40) return 'LOW';
-  if (score < 75) return 'MODERATE';
-  return 'HIGH';
+function RiskBadge({ level }: { level: RiskLevel }) {
+  if (level === RiskLevel.high) {
+    return <Badge className="bg-health-red/20 text-health-red border-health-red/30">High Risk</Badge>;
+  }
+  if (level === RiskLevel.moderate) {
+    return <Badge className="bg-health-amber/20 text-health-amber border-health-amber/30">Moderate Risk</Badge>;
+  }
+  return <Badge className="bg-health-green/20 text-health-green border-health-green/30">Low Risk</Badge>;
 }
 
-function formatTimestamp(ts: bigint): string {
-  const ms = Number(ts / BigInt(1_000_000));
-  return new Date(ms).toLocaleString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
-}
+export default function History() {
+  const { data: records = [], isLoading } = useGetAllRecords();
 
-function RiskRecordCard({ record }: { record: HealthRecord }) {
-  const level = getRiskLevel(record.riskScore);
-  const levelColors = {
-    LOW: { badge: 'bg-risk-low border-risk-low risk-low', dot: 'bg-health-green' },
-    MODERATE: { badge: 'bg-risk-moderate border-risk-moderate risk-moderate', dot: 'bg-health-amber' },
-    HIGH: { badge: 'bg-risk-high border-risk-high risk-high', dot: 'bg-health-red' },
-  };
-
-  return (
-    <Card className="shadow-card hover:shadow-card-hover transition-shadow">
-      <CardContent className="py-4 px-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className={`w-2.5 h-2.5 rounded-full shrink-0 mt-0.5 ${levelColors[level].dot}`} />
-            <div className="min-w-0">
-              <p className="text-sm font-semibold font-display truncate">
-                {record.firstName} {record.lastName}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {formatTimestamp(record.timestamp)}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-lg font-display font-bold">{record.riskScore.toFixed(0)}%</span>
-            <Badge className={`border text-xs font-semibold ${levelColors[level].badge}`}>
-              {level}
-            </Badge>
-          </div>
-        </div>
-
-        <div className="mt-3 grid grid-cols-3 sm:grid-cols-6 gap-2">
-          {[
-            { label: 'Age', value: record.age.toString() },
-            { label: 'BMI', value: record.bmi.toFixed(1) },
-            { label: 'BP', value: `${record.bloodPressure}` },
-            { label: 'Glucose', value: `${record.glucose}` },
-            { label: 'Hgb', value: record.hemoglobin.toFixed(1) },
-            { label: 'Chol.', value: `${record.cholesterol}` },
-          ].map(({ label, value }) => (
-            <div key={label} className="bg-muted/40 rounded-md px-2 py-1.5 text-center">
-              <p className="text-xs text-muted-foreground leading-none">{label}</p>
-              <p className="text-xs font-semibold mt-0.5">{value}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-2 flex gap-2 flex-wrap">
-          <span className="text-xs text-muted-foreground capitalize">
-            {record.gender === 'male' ? '♂ Male' : '♀ Female'}
-          </span>
-          {record.isSmoker && (
-            <span className="text-xs text-health-amber">🚬 Smoker</span>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+  const sorted = useMemo(
+    () => [...records].sort((a, b) => Number(b.timestamp - a.timestamp)),
+    [records]
   );
-}
-
-export function History() {
-  const { data: records, isLoading } = useGetAllRecords();
-
-  const sortedRecords = React.useMemo(() => {
-    if (!records) return [];
-    return [...records].sort((a, b) => Number(b.timestamp - a.timestamp));
-  }, [records]);
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-foreground flex items-center gap-2">
-          <HistoryIcon className="w-6 h-6 text-accent" />
-          Prediction History
-        </h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          All past risk assessments stored on the Internet Computer blockchain.
+        <h1 className="text-2xl font-bold text-foreground font-display">Prediction History</h1>
+        <p className="text-muted-foreground mt-1">
+          All past risk assessments, most recent first.
         </p>
       </div>
 
-      {/* Risk Assessment History */}
-      <section>
-        <div className="flex items-center gap-2 mb-4">
-          <Activity className="w-4 h-4 text-accent" />
-          <h2 className="font-display text-base font-semibold">Risk Assessment History</h2>
-          {records && (
-            <Badge variant="secondary" className="text-xs ml-1">
-              {records.length} record{records.length !== 1 ? 's' : ''}
-            </Badge>
-          )}
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-lg" />
+          ))}
         </div>
+      ) : sorted.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+          <Clock className="w-12 h-12 mb-3 opacity-30" />
+          <p className="text-sm">No history yet. Run a risk assessment to see results here.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {sorted.map((record, idx) => {
+            const date = new Date(Number(record.timestamp) / 1_000_000);
+            const genderLabel = record.gender === Gender.male ? "Male" : "Female";
+            const riskColor =
+              record.riskLevel === RiskLevel.high
+                ? "border-l-health-red"
+                : record.riskLevel === RiskLevel.moderate
+                ? "border-l-health-amber"
+                : "border-l-health-green";
 
-        {isLoading ? (
-          <div className="space-y-3">
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full rounded-xl" />
-            ))}
-          </div>
-        ) : sortedRecords.length === 0 ? (
-          <Card className="shadow-card">
-            <CardContent className="text-center py-12">
-              <ClipboardList className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-sm font-medium text-muted-foreground">No risk assessments yet</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">
-                Submit a risk prediction to see history here
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-3">
-            {sortedRecords.map((record, idx) => (
-              <RiskRecordCard key={idx} record={record} />
-            ))}
-          </div>
-        )}
-      </section>
+            return (
+              <Card key={idx} className={`border-l-4 ${riskColor}`}>
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
+                        <User className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">
+                          {genderLabel}, {record.age.toString()} years old
+                        </p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <Clock className="w-3 h-3" />
+                          {date.toLocaleDateString()} at {date.toLocaleTimeString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <RiskBadge level={record.riskLevel} />
+                      <span className="text-xs text-muted-foreground">
+                        Score: {record.riskScore.toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-3 sm:grid-cols-6 gap-2 text-xs">
+                    {[
+                      { label: "BMI", value: record.bmi.toFixed(1) },
+                      { label: "BP", value: `${record.bloodPressure.toString()} mmHg` },
+                      { label: "Glucose", value: `${record.glucose.toString()} mg/dL` },
+                      { label: "Hgb", value: `${record.hemoglobin.toFixed(1)} g/dL` },
+                      { label: "Chol", value: `${record.cholesterol.toString()} mg/dL` },
+                      { label: "Smoker", value: record.isSmoker ? "Yes" : "No" },
+                    ].map(({ label, value }) => (
+                      <div key={label} className="bg-muted/50 rounded p-1.5 text-center">
+                        <p className="text-muted-foreground">{label}</p>
+                        <p className="font-medium mt-0.5">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {sorted.length > 0 && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Activity className="w-3 h-3" />
+          {sorted.length} record{sorted.length !== 1 ? "s" : ""} total
+        </div>
+      )}
     </div>
   );
 }

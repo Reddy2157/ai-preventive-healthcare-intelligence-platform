@@ -1,12 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useActor } from './useActor';
-import { Gender, type HealthRecord } from '../backend';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useActor } from "./useActor";
+import { Gender, RiskLevel, type HealthRecord } from "../backend";
+
+export type { HealthRecord };
+export { Gender, RiskLevel };
 
 export function useGetAllRecords() {
   const { actor, isFetching } = useActor();
 
   return useQuery<HealthRecord[]>({
-    queryKey: ['healthRecords'],
+    queryKey: ["healthRecords"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getAllRecords();
@@ -21,33 +24,29 @@ export function useAddRecord() {
 
   return useMutation({
     mutationFn: async (params: {
-      firstName: string;
-      lastName: string;
-      age: number;
+      age: bigint;
       bmi: number;
-      bloodPressure: number;
-      glucose: number;
+      bloodPressure: bigint;
+      glucose: bigint;
       hemoglobin: number;
-      cholesterol: number;
+      cholesterol: bigint;
       gender: Gender;
       isSmoker: boolean;
     }) => {
-      if (!actor) throw new Error('Actor not initialized');
+      if (!actor) throw new Error("Actor not initialized");
       return actor.addRecord(
-        params.firstName,
-        params.lastName,
-        BigInt(params.age),
+        params.age,
         params.bmi,
-        BigInt(params.bloodPressure),
-        BigInt(params.glucose),
+        params.bloodPressure,
+        params.glucose,
         params.hemoglobin,
-        BigInt(params.cholesterol),
+        params.cholesterol,
         params.gender,
         params.isSmoker
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['healthRecords'] });
+      queryClient.invalidateQueries({ queryKey: ["healthRecords"] });
     },
   });
 }
