@@ -1,0 +1,91 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-03-01T18:21:16.465Z",
+  "summary": "The diff implements most of the required features for persistent history storage. The backend Motoko actor uses a Map for storage and exposes addRecord/getAllRecords. The frontend RiskPredictor.tsx calls useAddRecord on submission with error handling. However, several gaps exist: the backend lacks riskLevel field and stable storage semantics are unclear; getAllRecords does not sort newest-first; migration.mo was generated even though the schema may not have changed; and REQ-11 Dashboard/History integration details are only summarized without confirming loading skeletons and empty-state messages.",
+  "missing_requirements": [
+    {
+      "id": "REQ-8",
+      "requirement": "addRecord must accept the computed risk level field, and getAllRecords must return records in reverse-chronological order.",
+      "reason": "The backend addRecord signature in main.mo does not accept a riskLevel parameter and the HealthRecord type has no riskLevel field. Additionally, getAllRecords returns records.values().toArray() without any sorting, so newest-first ordering is not guaranteed.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "requirement": "Health records are stored in stable variables so they survive canister upgrades.",
+      "reason": "The actor declares 'var records = Map.empty<Text, HealthRecord>()' without the 'stable' keyword. Without stable storage, data will not survive canister upgrades.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "requirement": "TypeScript HealthRecord type must include riskLevel field, and useAddRecord/useGetAllRecords hooks must correctly map all Candid fields including riskLevel.",
+      "reason": "The backend HealthRecord type has no riskLevel field, so the Candid-generated type will also lack it. The actual hook implementation in useQueries.ts is not shown in the diff, so correct mapping cannot be confirmed.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "requirement": "The saved record must include the computed risk level as part of what is persisted to the backend.",
+      "reason": "RiskPredictor.tsx calls addRecord.mutateAsync without a riskLevel parameter, and the backend addRecord function does not accept riskLevel. The risk level computed on the frontend is never persisted.",
+      "evidence": [
+        "frontend/src/pages/RiskPredictor.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "requirement": "A loading skeleton or spinner is shown while records are being fetched on Dashboard and History pages.",
+      "reason": "The diff only provides a summary string for Dashboard.tsx and History.tsx without showing actual code. Loading skeleton/spinner implementation cannot be confirmed from the available evidence.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "requirement": "An empty-state message is shown when no records exist yet on Dashboard and History pages.",
+      "reason": "The file summaries mention empty state handling for History.tsx but the actual implementation code is not shown. Dashboard.tsx summary does not explicitly mention empty-state handling.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "migration.mo was generated and wired into the backend actor despite no apparent schema change.",
+      "reason": "The build constraints state to generate migration.mo only if the stable data schema changes. The migration.mo simply maps old records to new records with identical schemas, suggesting no schema change occurred.",
+      "evidence": [
+        "backend/migration.mo",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "getRecordById query function was added to the backend actor.",
+      "reason": "No requirement in the build request asks for a getRecordById function. This is an extra function not requested by any REQ.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "firstName and lastName fields were added to the HealthRecord type and addRecord function.",
+      "reason": "The requirements specify fields: age, BMI, blood pressure, glucose, hemoglobin, cholesterol, gender, smoker, risk score, risk level, and timestamp. firstName and lastName are not listed as required fields in REQ-8 or REQ-9.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/pages/RiskPredictor.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.72,
+  "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/pages/RiskPredictor.tsx",
+    "project_state.json"
+  ]
+}

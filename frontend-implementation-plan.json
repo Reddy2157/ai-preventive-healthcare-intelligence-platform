@@ -1,0 +1,64 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add persistent history storage to backend and wire frontend to use it",
+  "requirements": [
+    {
+      "id": "REQ-9",
+      "summary": "Update React Query hooks to map backend addRecord and getAllRecords interfaces with complete HealthRecord type including all fields",
+      "acceptanceCriteria": [
+        "`useAddRecord` mutation calls the backend `addRecord` function with all required fields.",
+        "`useGetAllRecords` query correctly fetches and deserializes all records from the backend.",
+        "TypeScript `HealthRecord` type matches the Candid-generated type with all fields present.",
+        "Query cache is invalidated and records list refreshes after a new record is added."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update `useAddRecord` mutation to accept and pass all required fields (firstName, lastName, age, BMI, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker) to the backend `addRecord` function. Update `useGetAllRecords` to correctly deserialize the complete HealthRecord type from backend including all fields (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker, riskScore, timestamp, firstName, lastName). Ensure the mutation invalidates the `getAllRecords` query cache on success so the records list refreshes automatically."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Wire RiskPredictor form submission to persist predictions via useAddRecord with all form values plus computed risk score and level",
+      "acceptanceCriteria": [
+        "After submitting the risk predictor form, a record is saved to the backend.",
+        "The saved record includes all input fields plus the computed risk score and risk level.",
+        "A loading indicator is shown while the save is in progress.",
+        "An error message is shown if the save fails."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/RiskPredictor.tsx",
+          "operation": "modify",
+          "description": "Import and call `useAddRecord` mutation on successful form submission. Pass all form values (firstName, lastName, age, BMI, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker) along with the computed riskScore and riskLevel to the mutation. Display a loading spinner or disabled state on the submit button while `addRecord` is pending. Show a success toast notification on successful save and an error alert if the mutation fails. Ensure the form remains usable after save completes."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Update Dashboard and History pages to load persisted records from backend via useGetAllRecords instead of local state",
+      "acceptanceCriteria": [
+        "Dashboard table populates with records fetched from the backend on page load.",
+        "History page cards populate with records fetched from the backend on page load.",
+        "Data is still present after a full browser page refresh.",
+        "A loading skeleton or spinner is shown while records are being fetched.",
+        "An empty-state message is shown when no records exist yet."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "modify",
+          "description": "Replace any local in-memory state management with `useGetAllRecords` query hook to fetch records from the backend. Display a loading skeleton or spinner while `isLoading` is true. Show an empty-state message when the records array is empty. Populate the statistics cards (Total Patients, High Risk Count, Avg Risk Score) and the data table with the fetched records. Ensure the refresh button refetches the query. Update CSV export to use the backend-fetched records."
+        },
+        {
+          "path": "frontend/src/pages/History.tsx",
+          "operation": "modify",
+          "description": "Replace any local in-memory state management with `useGetAllRecords` query hook to fetch records from the backend. Display a loading spinner while `isLoading` is true. Show an empty-state message (e.g., 'No health records found. Submit a risk assessment to create your first record.') when the records array is empty. Render record cards from the fetched data, ensuring each card displays all fields (firstName, lastName, age, BMI, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker, riskScore, riskLevel, timestamp). Ensure records remain visible after a full page refresh."
+        }
+      ]
+    }
+  ]
+}

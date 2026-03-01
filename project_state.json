@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "AI Preventive Healthcare Intelligence Platform - a web-based dashboard featuring health risk prediction (using patient vitals like age, BMI, blood pressure, glucose), chest X-ray analysis, health tips, and prediction history tracking.",
+  "architectural_notes": [
+    "Multi-page navigation: Risk Predictor, X-Ray Analysis, Dashboard, History",
+    "Frontend: web-based (originally Streamlit code provided, adapt to standard web stack)",
+    "ML inference should be simulated on frontend since no backend model files are available"
+  ],
+  "known_issues": [
+    "Build has failed multiple times; simplify scope to core health risk input form and dashboard"
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-build-a-multi-page-frontend-application-with-a-sidebar-navigation-containing-four-pages-risk-predictor-x-ray-analysis-dashboard-and-history",
+      "title": "Build a multi-page frontend application with a sidebar navigation containing four pages: Risk Predictor, X-Ray Analysis, Dashboard, and History.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-health-risk-predictor-page-with-input-fields-for-age-20-100-bmi-10-0-50-0-blood-pressure-80-200-mmhg-glucose-50-300-mg-dl-hemoglobin-5-20-g-dl-cholesterol-100-400-mg-dl-gender-male-female-and-smoker-checkbox-on-form-submission-compute-a-simulated-risk-score-using-weighted-thresholds-bmi-25-bp-120-glucose-110-cholesterol-200-hemoglobin-12-reduce-risk-smoking-increases-risk-and-display-a-color-coded-gauge-chart-green-low-40-orange-moderate-40-75-red-high-75-with-a-risk-level-label",
+      "title": "Implement a Health Risk Predictor page with input fields for Age (20–100), BMI (10.0–50.0), Blood Pressure (80–200 mmHg), Glucose (50–300 mg/dL), Hemoglobin (5–20 g/dL), Cholesterol (100–400 mg/dL), Gender (Male/Female), and Smoker (checkbox). On form submission, compute a simulated risk score using weighted thresholds (BMI < 25, BP < 120, glucose < 110, cholesterol < 200, hemoglobin ≥ 12 reduce risk; smoking increases risk) and display a color-coded gauge chart (green = low < 40%, orange = moderate 40–75%, red = high > 75%) with a risk level label.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-x-ray-analysis-page-that-accepts-an-image-file-upload-jpg-png-since-ml-model-inference-is-not-available-simulate-a-classification-result-randomly-assign-normal-or-pneumonia-with-a-simulated-confidence-score-between-60-99-display-the-uploaded-image-the-prediction-label-confidence-percentage-and-a-bar-chart-comparing-normal-vs-pneumonia-probabilities-show-a-disclaimer-that-this-is-not-a-medical-diagnosis",
+      "title": "Implement an X-Ray Analysis page that accepts an image file upload (JPG/PNG). Since ML model inference is not available, simulate a classification result: randomly assign 'Normal' or 'Pneumonia' with a simulated confidence score between 60–99%. Display the uploaded image, the prediction label, confidence percentage, and a bar chart comparing Normal vs Pneumonia probabilities. Show a disclaimer that this is not a medical diagnosis.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-health-dashboard-page-that-displays-all-past-risk-prediction-entries-in-a-table-columns-age-bmi-blood-pressure-glucose-hemoglobin-cholesterol-risk-score-risk-level-include-a-button-to-export-the-table-data-as-a-csv-file-download",
+      "title": "Implement a Health Dashboard page that displays all past risk prediction entries in a table (columns: Age, BMI, Blood Pressure, Glucose, Hemoglobin, Cholesterol, Risk Score, Risk Level). Include a button to export the table data as a CSV file download.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-prediction-history-page-that-lists-all-past-risk-predictor-results-and-x-ray-analysis-results-in-separate-sections-each-entry-should-show-the-input-values-and-the-computed-outcome",
+      "title": "Implement a Prediction History page that lists all past risk predictor results and X-ray analysis results in separate sections. Each entry should show the input values and the computed outcome.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-clean-clinical-yet-modern-visual-theme-dark-navy-teal-color-palette-with-crisp-white-cards-subtle-green-accents-for-healthy-metrics-amber-for-moderate-risk-and-red-for-high-risk-use-a-professional-medical-grade-typography-style-with-clear-data-hierarchy-layout-should-use-a-fixed-sidebar-for-navigation-and-a-main-content-area-with-card-based-sections",
+      "title": "Apply a clean, clinical yet modern visual theme: dark navy/teal color palette with crisp white cards, subtle green accents for healthy metrics, amber for moderate risk, and red for high risk. Use a professional medical-grade typography style with clear data hierarchy. Layout should use a fixed sidebar for navigation and a main content area with card-based sections.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-src-pages-riskpredictor-tsx-to-call-useaddrecord-on-successful-form-submission-passing-all-form-values-plus-the-computed-risk-score-and-risk-level-so-every-prediction-is-persisted-to-the-backend",
+      "title": "Update `frontend/src/pages/RiskPredictor.tsx` to call `useAddRecord` on successful form submission, passing all form values plus the computed risk score and risk level, so every prediction is persisted to the backend.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Health risk predictor with inputs for age, BMI, blood pressure, glucose, hemoglobin, cholesterol, gender, and smoking status",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Chest X-ray image upload and classifier showing Normal vs Pneumonia prediction with confidence score",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Health dashboard showing historical predictions and exportable results",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Prediction history page showing past risk and X-ray results",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Risk gauge visualization (low/moderate/high) with color-coded risk levels",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Store all prediction history (risk assessments and X-ray results) in the Motoko backend as persistent stable storage. Expose query and update endpoints to save a risk assessment record and retrieve all records.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Ensure the Motoko backend actor uses stable storage (stable var or StableHashMap) for all health records so that data persists across canister upgrades and page refreshes. The actor must expose: (1) an update function `addRecord` that accepts all risk predictor fields (age, BMI, blood pressure, glucose, hemoglobin, cholesterol, gender, smoker, computed risk score, risk level, and a timestamp) and stores the record, and (2) a query function `getAllRecords` that returns all stored records in reverse-chronological order.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Update the `useAddRecord` and `useGetAllRecords` React Query hooks in `frontend/src/hooks/useQueries.ts` to correctly map the backend's `addRecord` and `getAllRecords` Candid interfaces. Ensure the `HealthRecord` TypeScript type includes all fields returned by the backend (age, BMI, blood pressure, glucose, hemoglobin, cholesterol, gender, smoker, riskScore, riskLevel, timestamp).",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Update `frontend/src/pages/Dashboard.tsx` and `frontend/src/pages/History.tsx` to load records via `useGetAllRecords` from the backend instead of any local in-memory state. Both pages should display live persisted data that survives page refreshes.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "AI Preventive Healthcare Platform",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

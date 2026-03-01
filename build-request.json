@@ -1,0 +1,105 @@
+{
+  "kind": "build_request",
+  "title": "Add persistent history storage to backend and wire frontend to use it",
+  "projectName": "AI Preventive Healthcare Platform",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-8",
+      "text": "Ensure the Motoko backend actor uses stable storage (stable var or StableHashMap) for all health records so that data persists across canister upgrades and page refreshes. The actor must expose: (1) an update function `addRecord` that accepts all risk predictor fields (age, BMI, blood pressure, glucose, hemoglobin, cholesterol, gender, smoker, computed risk score, risk level, and a timestamp) and stores the record, and (2) a query function `getAllRecords` that returns all stored records in reverse-chronological order.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-6"
+        ],
+        "quotes": [
+          "Persistent history storage is the one piece still pending",
+          "saving risk predictions and X-ray results to the backend so they survive page refreshes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Health records are stored in stable variables so they survive canister upgrades.",
+        "`addRecord` accepts all required fields and persists the entry.",
+        "`getAllRecords` returns all persisted records sorted newest-first.",
+        "No data loss occurs after a simulated canister upgrade cycle."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Update the `useAddRecord` and `useGetAllRecords` React Query hooks in `frontend/src/hooks/useQueries.ts` to correctly map the backend's `addRecord` and `getAllRecords` Candid interfaces. Ensure the `HealthRecord` TypeScript type includes all fields returned by the backend (age, BMI, blood pressure, glucose, hemoglobin, cholesterol, gender, smoker, riskScore, riskLevel, timestamp).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-6"
+        ],
+        "quotes": [
+          "saving risk predictions and X-ray results to the backend so they survive page refreshes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "`useAddRecord` mutation calls the backend `addRecord` function with all required fields.",
+        "`useGetAllRecords` query correctly fetches and deserializes all records from the backend.",
+        "TypeScript `HealthRecord` type matches the Candid-generated type with all fields present.",
+        "Query cache is invalidated and records list refreshes after a new record is added."
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Update `frontend/src/pages/RiskPredictor.tsx` to call `useAddRecord` on successful form submission, passing all form values plus the computed risk score and risk level, so every prediction is persisted to the backend.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-6"
+        ],
+        "quotes": [
+          "saving risk predictions and X-ray results to the backend so they survive page refreshes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After submitting the risk predictor form, a record is saved to the backend.",
+        "The saved record includes all input fields plus the computed risk score and risk level.",
+        "A loading indicator is shown while the save is in progress.",
+        "An error message is shown if the save fails."
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Update `frontend/src/pages/Dashboard.tsx` and `frontend/src/pages/History.tsx` to load records via `useGetAllRecords` from the backend instead of any local in-memory state. Both pages should display live persisted data that survives page refreshes.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-6"
+        ],
+        "quotes": [
+          "saving risk predictions and X-ray results to the backend so they survive page refreshes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dashboard table populates with records fetched from the backend on page load.",
+        "History page cards populate with records fetched from the backend on page load.",
+        "Data is still present after a full browser page refresh.",
+        "A loading skeleton or spinner is shown while records are being fetched.",
+        "An empty-state message is shown when no records exist yet."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
+    "All Motoko logic must remain in backend/main.mo as a single actor.",
+    "Generate migration.mo only if the stable data schema changes from the existing backend."
+  ],
+  "nonGoals": [
+    "Persisting X-ray analysis results to the backend (only risk predictor records are in scope).",
+    "Adding new pages or navigation items.",
+    "Changing the existing visual theme or layout.",
+    "Implementing Internet Identity authentication gating for record access."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

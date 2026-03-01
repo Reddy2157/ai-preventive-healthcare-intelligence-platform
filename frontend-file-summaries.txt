@@ -1,0 +1,15 @@
+{
+  "frontend/src/index.css": "Global styles with a clinical dark navy/teal OKLCH color palette, Inter/Space Grotesk fonts, and custom risk-level utility classes (risk-low, risk-moderate, risk-high) for green/amber/red indicators.",
+  "frontend/tailwind.config.js": "Extended Tailwind config with Space Grotesk/Inter fonts, clinical navy/teal/health-green/health-amber/health-red color tokens, card shadows, and fade-in animation.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for fetching all health records (useGetAllRecords) and adding a new record (useAddRecord) via the Motoko backend actor.",
+  "frontend/src/utils/csvExport.ts": "Utility function that converts an array of HealthRecord objects to CSV format and triggers a browser file download.",
+  "frontend/src/lib/riskCalculator.ts": "Pure TypeScript risk score calculator using weighted clinical thresholds (BMI, BP, glucose, cholesterol, hemoglobin, smoking) returning a 0–100 score and LOW/MODERATE/HIGH level.",
+  "frontend/src/components/RiskGauge.tsx": "Canvas-based semicircular gauge component that renders a color-coded risk score with green/amber/red zones, a needle, and a risk level badge.",
+  "frontend/src/components/XRayResultChart.tsx": "Horizontal bar chart component displaying Normal vs Pneumonia probability percentages with color-coded progress bars.",
+  "frontend/src/components/AppSidebar.tsx": "Fixed sidebar navigation using shadcn Sidebar components with logo, four nav links (Risk Predictor, X-Ray, Dashboard, History), active state highlighting, and a disclaimer notice.",
+  "frontend/src/pages/RiskPredictor.tsx": "Health risk predictor page with a two-column layout: patient info/lab results form on the left and a live risk gauge + metric summary on the right. Now shows a destructive error alert below the form when saving to the backend fails, while still displaying the computed risk result.",
+  "frontend/src/pages/XRayAnalysis.tsx": "Chest X-ray analysis page with drag-and-drop image upload, simulated Normal/Pneumonia classification with confidence score, bar chart, and medical disclaimer.",
+  "frontend/src/pages/Dashboard.tsx": "Health dashboard page showing summary stats cards and a full data table of all backend health records with CSV export functionality.",
+  "frontend/src/pages/History.tsx": "Prediction history page listing all risk assessment records sorted by most recent, with per-record metric chips, risk level badges, and empty state handling.",
+  "frontend/src/App.tsx": "Main app component setting up TanStack Router with four routes (/, /xray, /dashboard, /history) inside a SidebarProvider layout with header, footer, and attribution link."
+}

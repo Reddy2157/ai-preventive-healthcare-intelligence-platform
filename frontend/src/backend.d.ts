@@ -1,0 +1,33 @@
+import type { Principal } from "@icp-sdk/core/principal";
+export interface Some<T> {
+    __kind__: "Some";
+    value: T;
+}
+export interface None {
+    __kind__: "None";
+}
+export type Option<T> = Some<T> | None;
+export interface HealthRecord {
+    age: bigint;
+    bmi: number;
+    isSmoker: boolean;
+    bloodPressure: bigint;
+    hemoglobin: number;
+    glucose: bigint;
+    gender: Gender;
+    timestamp: Time;
+    lastName: string;
+    riskScore: number;
+    cholesterol: bigint;
+    firstName: string;
+}
+export type Time = bigint;
+export enum Gender {
+    female = "female",
+    male = "male"
+}
+export interface backendInterface {
+    addRecord(firstName: string, lastName: string, age: bigint, bmi: number, bloodPressure: bigint, glucose: bigint, hemoglobin: number, cholesterol: bigint, gender: Gender, isSmoker: boolean): Promise<string>;
+    getAllRecords(): Promise<Array<HealthRecord>>;
+    getRecordById(recordId: string): Promise<HealthRecord>;
+}
