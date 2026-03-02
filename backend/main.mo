@@ -6,6 +6,7 @@ import Runtime "mo:core/Runtime";
 
 actor {
   type HealthRecord = {
+    patientName : Text;
     age : Nat;
     bmi : Float;
     bloodPressure : Nat;
@@ -33,6 +34,7 @@ actor {
   var records = Map.empty<Text, HealthRecord>();
 
   public shared ({ caller }) func addRecord(
+    patientName : Text,
     age : Nat,
     bmi : Float,
     bloodPressure : Nat,
@@ -54,6 +56,7 @@ actor {
     let riskLevel = determineRiskLevel(riskScore);
 
     let record : HealthRecord = {
+      patientName;
       age;
       bmi;
       bloodPressure;

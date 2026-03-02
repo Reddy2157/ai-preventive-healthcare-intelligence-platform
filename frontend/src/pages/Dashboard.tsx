@@ -110,6 +110,7 @@ export default function Dashboard() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
+                  <TableHead>Patient Name</TableHead>
                   <TableHead>Demographics</TableHead>
                   <TableHead>BMI</TableHead>
                   <TableHead>BP</TableHead>
@@ -124,6 +125,11 @@ export default function Dashboard() {
                   <TableRow key={idx}>
                     <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
                       {new Date(Number(record.timestamp) / 1_000_000).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="font-medium text-sm">
+                      {record.patientName && record.patientName !== "unknown"
+                        ? record.patientName
+                        : <span className="text-muted-foreground italic">—</span>}
                     </TableCell>
                     <TableCell>
                       <span className="text-sm">

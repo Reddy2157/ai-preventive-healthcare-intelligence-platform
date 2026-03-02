@@ -16,6 +16,7 @@ export interface HealthRecord {
     glucose: bigint;
     gender: Gender;
     timestamp: Time;
+    patientName: string;
     riskLevel: RiskLevel;
     riskScore: number;
     cholesterol: bigint;
@@ -31,7 +32,7 @@ export enum RiskLevel {
     moderate = "moderate"
 }
 export interface backendInterface {
-    addRecord(age: bigint, bmi: number, bloodPressure: bigint, glucose: bigint, hemoglobin: number, cholesterol: bigint, gender: Gender, isSmoker: boolean): Promise<string>;
+    addRecord(patientName: string, age: bigint, bmi: number, bloodPressure: bigint, glucose: bigint, hemoglobin: number, cholesterol: bigint, gender: Gender, isSmoker: boolean): Promise<string>;
     getAllRecords(): Promise<Array<HealthRecord>>;
     getRecordById(recordId: string): Promise<HealthRecord>;
 }

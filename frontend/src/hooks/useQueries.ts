@@ -24,6 +24,7 @@ export function useAddRecord() {
 
   return useMutation({
     mutationFn: async (params: {
+      patientName: string;
       age: bigint;
       bmi: number;
       bloodPressure: bigint;
@@ -35,6 +36,7 @@ export function useAddRecord() {
     }) => {
       if (!actor) throw new Error("Actor not initialized");
       return actor.addRecord(
+        params.patientName,
         params.age,
         params.bmi,
         params.bloodPressure,

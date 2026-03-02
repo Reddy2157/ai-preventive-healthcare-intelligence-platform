@@ -1,15 +1,15 @@
 {
   "frontend/src/index.css": "Global styles with a clinical dark navy/teal OKLCH color palette, Inter/Space Grotesk fonts, and custom risk-level utility classes (risk-low, risk-moderate, risk-high) for green/amber/red indicators.",
   "frontend/tailwind.config.js": "Extended Tailwind config with Space Grotesk/Inter fonts, clinical navy/teal/health-green/health-amber/health-red color tokens, card shadows, and fade-in animation.",
-  "frontend/src/hooks/useQueries.ts": "React Query hooks for fetching all health records and adding a new record via the backend actor, with correct types imported from the backend interface (Gender, RiskLevel enums and HealthRecord type).",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for fetching all health records and adding a new record via the backend actor; `useAddRecord` now includes `patientName: string` in its params type and passes it as the first argument to `actor.addRecord()`.",
   "frontend/src/utils/csvExport.ts": "Utility that converts HealthRecord arrays to CSV and triggers a browser download, using Gender and RiskLevel enum comparisons from the backend interface.",
   "frontend/src/lib/riskCalculator.ts": "Pure TypeScript risk score calculator using weighted clinical thresholds, returning a score (0–100) and a RiskLevel enum value imported from the backend interface.",
   "frontend/src/components/RiskGauge.tsx": "Canvas-based semicircular gauge component using RiskLevel enum from the backend interface to render color-coded risk score with needle and arc segments.",
   "frontend/src/components/XRayResultChart.tsx": "Horizontal bar chart component displaying Normal vs Pneumonia probability percentages with color-coded progress bars.",
   "frontend/src/components/AppSidebar.tsx": "Fixed sidebar navigation using shadcn Sidebar components with logo, four nav links (Risk Predictor, X-Ray, Dashboard, History), active state highlighting, and a disclaimer notice.",
-  "frontend/src/pages/RiskPredictor.tsx": "Health risk predictor page with patient info/vitals/lab form and live risk gauge, using Gender/RiskLevel enums from the backend interface and passing correctly-typed bigint fields to useAddRecord.",
+  "frontend/src/pages/RiskPredictor.tsx": "Health risk predictor page with a patient name text input added to the Patient Information card, bound to `patientName` form state, and included in the `useAddRecord` mutation payload; also shows the patient name in the Metric Summary panel.",
   "frontend/src/pages/XRayAnalysis.tsx": "Chest X-ray analysis page with drag-and-drop upload, simulated Normal/Pneumonia classification, bar chart results, and medical disclaimer; uses named import for XRayResultChart and passes normalProb/pneumoniaProb as fractions.",
-  "frontend/src/pages/Dashboard.tsx": "Health dashboard showing summary stats and a full data table of all backend health records with CSV export, using Gender/RiskLevel enum comparisons from the backend interface.",
-  "frontend/src/pages/History.tsx": "Prediction history page listing all risk assessments sorted by most recent, using Gender/RiskLevel enum comparisons from the backend interface and displaying bigint fields correctly.",
+  "frontend/src/pages/Dashboard.tsx": "Health dashboard with summary stats and a full records table; now includes a \"Patient Name\" column that shows the stored name or a dash for legacy records without a name.",
+  "frontend/src/pages/History.tsx": "Prediction history page listing all risk assessments; now displays the patient name prominently alongside gender/age when present, gracefully hiding it for legacy records with an empty or \"unknown\" name.",
   "frontend/src/App.tsx": "Main app component with TanStack Router (four routes), QueryClientProvider, SidebarProvider layout with header/footer, and caffeine.ai attribution; uses named import for AppSidebar."
 }

@@ -98,6 +98,7 @@ export interface HealthRecord {
     glucose: bigint;
     gender: Gender;
     timestamp: Time;
+    patientName: string;
     riskLevel: RiskLevel;
     riskScore: number;
     cholesterol: bigint;
@@ -113,24 +114,24 @@ export enum RiskLevel {
     moderate = "moderate"
 }
 export interface backendInterface {
-    addRecord(age: bigint, bmi: number, bloodPressure: bigint, glucose: bigint, hemoglobin: number, cholesterol: bigint, gender: Gender, isSmoker: boolean): Promise<string>;
+    addRecord(patientName: string, age: bigint, bmi: number, bloodPressure: bigint, glucose: bigint, hemoglobin: number, cholesterol: bigint, gender: Gender, isSmoker: boolean): Promise<string>;
     getAllRecords(): Promise<Array<HealthRecord>>;
     getRecordById(recordId: string): Promise<HealthRecord>;
 }
 import type { Gender as _Gender, HealthRecord as _HealthRecord, RiskLevel as _RiskLevel, Time as _Time } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async addRecord(arg0: bigint, arg1: number, arg2: bigint, arg3: bigint, arg4: number, arg5: bigint, arg6: Gender, arg7: boolean): Promise<string> {
+    async addRecord(arg0: string, arg1: bigint, arg2: number, arg3: bigint, arg4: bigint, arg5: number, arg6: bigint, arg7: Gender, arg8: boolean): Promise<string> {
         if (this.processError) {
             try {
-                const result = await this.actor.addRecord(arg0, arg1, arg2, arg3, arg4, arg5, to_candid_Gender_n1(this._uploadFile, this._downloadFile, arg6), arg7);
+                const result = await this.actor.addRecord(arg0, arg1, arg2, arg3, arg4, arg5, arg6, to_candid_Gender_n1(this._uploadFile, this._downloadFile, arg7), arg8);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addRecord(arg0, arg1, arg2, arg3, arg4, arg5, to_candid_Gender_n1(this._uploadFile, this._downloadFile, arg6), arg7);
+            const result = await this.actor.addRecord(arg0, arg1, arg2, arg3, arg4, arg5, arg6, to_candid_Gender_n1(this._uploadFile, this._downloadFile, arg7), arg8);
             return result;
         }
     }
@@ -181,6 +182,7 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
     glucose: bigint;
     gender: _Gender;
     timestamp: _Time;
+    patientName: string;
     riskLevel: _RiskLevel;
     riskScore: number;
     cholesterol: bigint;
@@ -193,6 +195,7 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
     glucose: bigint;
     gender: Gender;
     timestamp: Time;
+    patientName: string;
     riskLevel: RiskLevel;
     riskScore: number;
     cholesterol: bigint;
@@ -206,6 +209,7 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
         glucose: value.glucose,
         gender: from_candid_Gender_n6(_uploadFile, _downloadFile, value.gender),
         timestamp: value.timestamp,
+        patientName: value.patientName,
         riskLevel: from_candid_RiskLevel_n8(_uploadFile, _downloadFile, value.riskLevel),
         riskScore: value.riskScore,
         cholesterol: value.cholesterol

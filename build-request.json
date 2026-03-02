@@ -1,58 +1,36 @@
 {
   "kind": "build_request",
-  "title": "Fix deployment failures — resolve all build and compilation errors",
-  "projectName": "AI Healthcare Platform",
-  "priority": "high",
+  "title": "Publish the website",
+  "projectName": "AI Healthcare Monitor",
+  "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-14",
-      "text": "Audit and fix all compilation errors in `backend/main.mo` and `backend/migration.mo` so the Motoko actor compiles cleanly. Verify that: stable storage declarations are syntactically correct, all imported modules resolve, and the `addRecord`, `getAllRecords`, and `getRecordById` endpoints have valid type signatures matching the HealthRecord shape (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, smoker, riskScore, riskLevel, timestamp). The backend must compile without errors before deployment.",
-      "target": "backend",
+      "id": "REQ-1",
+      "text": "Publish and deploy the AI Healthcare Monitoring application so it is publicly accessible.",
+      "target": "both",
       "source": {
         "messageIds": [
           "msg-last"
         ],
         "quotes": [
-          "App not deployed at all"
+          "Publish the website"
         ]
       },
       "acceptanceCriteria": [
-        "`backend/main.mo` compiles without any Motoko type or syntax errors.",
-        "`backend/migration.mo` compiles without errors and is compatible with `main.mo`.",
-        "Stable storage variables are correctly declared so data persists across upgrades.",
-        "`addRecord`, `getAllRecords`, and `getRecordById` have valid, consistent type signatures."
-      ]
-    },
-    {
-      "id": "REQ-15",
-      "text": "Audit and fix all TypeScript compilation errors in the frontend so the build pipeline completes successfully. Specifically: ensure `frontend/src/hooks/useQueries.ts` correctly maps the backend Candid interface for `addRecord` and `getAllRecords`; ensure the `HealthRecord` TypeScript type exactly matches all backend fields; and ensure `RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`, and `XRayAnalysis.tsx` all compile without type errors. The `npm run build` command must succeed with zero errors.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "App not deployed at all"
-        ]
-      },
-      "acceptanceCriteria": [
-        "`npm run build` completes successfully with no TypeScript errors.",
-        "`HealthRecord` type in `useQueries.ts` matches all fields returned by the backend.",
-        "`useAddRecord` and `useGetAllRecords` hooks correctly call the backend Candid methods.",
-        "All four page components (`RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`, `XRayAnalysis.tsx`) compile without errors.",
-        "No implicit `any` or missing property errors in the frontend build output."
+        "The application is deployed and accessible via a public URL.",
+        "All existing features (Risk Predictor, X-Ray Analysis, Dashboard, History) are fully functional on the deployed version.",
+        "The backend canister is live and responds to frontend queries correctly."
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, or `frontend/src/components/ui`.",
-    "Keep all Motoko logic in a single actor in `backend/main.mo`.",
-    "Do not change the existing HealthRecord data schema or remove any existing API endpoints."
+    "Do not alter any existing functionality or data models.",
+    "Do not modify immutable frontend paths (hooks, main.tsx, ui components)."
   ],
   "nonGoals": [
     "Adding new features or pages.",
     "Changing the visual design or layout.",
-    "Migrating to a different backend language or frontend framework."
+    "Modifying backend logic or health record schema."
   ],
   "imageRequirements": {
     "required": [],

@@ -1,44 +1,26 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T18:42:09.156Z",
+  "generatedAt": "2026-03-02T05:14:49.776Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 1,
+    "total": 1,
+    "implemented": 0,
     "items": [
       {
-        "id": "REQ-14",
-        "summary": "Audit and fix all compilation errors in `backend/main.mo` and `backend/migration.mo` so the Motoko actor compiles cleanly. Verify that: stable storage declarations are syntactically correct, all imported modules resolve, and the `addRecord`, `getAllRecords`, and `getRecordById` endpoints have valid type signatures matching the HealthRecord shape (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, smoker, riskScore, riskLevel, timestamp). The backend must compile without errors before deployment.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-15",
-        "summary": "Audit and fix all TypeScript compilation errors in the frontend so the build pipeline completes successfully. Specifically: ensure `frontend/src/hooks/useQueries.ts` correctly maps the backend Candid interface for `addRecord` and `getAllRecords`; ensure the `HealthRecord` TypeScript type exactly matches all backend fields; and ensure `RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`, and `XRayAnalysis.tsx` all compile without type errors. The `npm run build` command must succeed with zero errors.",
-        "status": "implemented",
+        "id": "REQ-1",
+        "summary": "Publish and deploy the AI Healthcare Monitoring application so it is publicly accessible.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/RiskPredictor.tsx",
-          "frontend/src/pages/Dashboard.tsx",
-          "frontend/src/pages/History.tsx",
-          "frontend/src/pages/XRayAnalysis.tsx",
-          "frontend/src/utils/csvExport.ts",
-          "frontend/src/lib/riskCalculator.ts"
+          "frontend/src/hooks/useActor.ts",
+          "frontend/index.html",
+          "frontend/src/main.tsx",
+          "frontend/src/App.tsx"
         ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/RiskPredictor.tsx",
-          "frontend/src/pages/Dashboard.tsx",
-          "frontend/src/pages/History.tsx",
-          "frontend/src/pages/XRayAnalysis.tsx",
-          "frontend/src/utils/csvExport.ts",
-          "frontend/src/lib/riskCalculator.ts"
-        ]
+        "matchedFiles": []
       }
     ]
   },
@@ -46,17 +28,7 @@
     "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/RiskGauge.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/lib/riskCalculator.ts",
-    "frontend/src/pages/Dashboard.tsx",
-    "frontend/src/pages/History.tsx",
-    "frontend/src/pages/RiskPredictor.tsx",
-    "frontend/src/pages/XRayAnalysis.tsx",
-    "frontend/src/utils/csvExport.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

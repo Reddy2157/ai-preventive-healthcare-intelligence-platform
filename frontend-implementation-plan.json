@@ -1,53 +1,36 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix deployment failures — resolve all build and compilation errors",
+  "title": "Publish AI Healthcare Monitor Application",
   "requirements": [
     {
-      "id": "REQ-15",
-      "summary": "Audit and fix all TypeScript compilation errors in the frontend so the build pipeline completes successfully",
+      "id": "REQ-1",
+      "summary": "Prepare and verify the frontend application for public deployment with correct canister configuration and production-ready settings",
       "acceptanceCriteria": [
-        "`npm run build` completes successfully with no TypeScript errors.",
-        "`HealthRecord` type in `useQueries.ts` matches all fields returned by the backend.",
-        "`useAddRecord` and `useGetAllRecords` hooks correctly call the backend Candid methods.",
-        "All four page components (`RiskPredictor.tsx`, `Dashboard.tsx`, `History.tsx`, `XRayAnalysis.tsx`) compile without errors.",
-        "No implicit `any` or missing property errors in the frontend build output."
+        "The application is deployed and accessible via a public URL.",
+        "All existing features (Risk Predictor, X-Ray Analysis, Dashboard, History) are fully functional on the deployed version.",
+        "The backend canister is live and responds to frontend queries correctly."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/hooks/useActor.ts",
           "operation": "modify",
-          "description": "Fix the HealthRecord TypeScript type to exactly match the backend Candid interface fields. Ensure the type includes: age (bigint), bmi (number), bloodPressure (bigint), glucose (bigint), hemoglobin (number), cholesterol (bigint), gender (Gender enum), isSmoker (boolean), timestamp (Time/bigint), riskLevel (RiskLevel enum), and riskScore (number). Update useAddRecord to pass isSmoker parameter correctly to backend.addRecord. Verify useGetAllRecords correctly types the returned array of HealthRecord objects."
+          "description": "Verify the canister ID configuration points to the correct deployed backend canister. Ensure the actor initialization logic correctly handles production environment URLs and canister IDs. Confirm the authentication flow with Internet Identity works in the deployed environment."
         },
         {
-          "path": "frontend/src/pages/RiskPredictor.tsx",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Fix any TypeScript errors related to HealthRecord type mismatches. Ensure the component correctly passes all required parameters (age, bmi, bloodPressure, glucose, hemoglobin, cholesterol, gender, isSmoker) to the useAddRecord mutation hook. Verify that form field types align with the backend interface signature (bigint for age/bloodPressure/glucose/cholesterol, number for bmi/hemoglobin, boolean for isSmoker)."
+          "description": "Verify the base HTML template includes correct meta tags for production deployment. Ensure the asset paths and module references are compatible with the ICP hosting environment. Confirm the root div and script references are production-ready."
         },
         {
-          "path": "frontend/src/pages/Dashboard.tsx",
+          "path": "frontend/src/main.tsx",
           "operation": "modify",
-          "description": "Fix TypeScript errors by ensuring the component correctly types data returned from useGetAllRecords. Verify all HealthRecord fields are accessed with correct property names matching the backend interface (isSmoker instead of smoker if mismatched, riskLevel enum handling, bigint field conversions). Ensure the statistics calculations and table rendering handle all field types correctly without implicit any."
+          "description": "Verify the application entry point correctly initializes all providers (QueryClientProvider, InternetIdentityProvider) for production deployment. Ensure error boundaries and production-safe configurations are in place."
         },
         {
-          "path": "frontend/src/pages/History.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Fix TypeScript errors by ensuring the component correctly types the array of HealthRecord objects from useGetAllRecords. Verify all property accesses match the backend interface field names (isSmoker, riskLevel enum values, bigint fields). Ensure timestamp sorting and display logic handles bigint Time values correctly."
-        },
-        {
-          "path": "frontend/src/pages/XRayAnalysis.tsx",
-          "operation": "modify",
-          "description": "Fix any TypeScript compilation errors in the component. Ensure all type declarations are explicit, file upload handling is properly typed, and the simulated classification result object has correct types. Verify no implicit any types remain."
-        },
-        {
-          "path": "frontend/src/utils/csvExport.ts",
-          "operation": "modify",
-          "description": "Update the exportRecordsToCSV function to handle the correct HealthRecord type from the backend interface. Ensure isSmoker boolean field is correctly formatted in CSV output, bigint fields (age, bloodPressure, glucose, cholesterol, timestamp) are converted to strings or numbers as appropriate, and RiskLevel enum values are properly stringified."
-        },
-        {
-          "path": "frontend/src/lib/riskCalculator.ts",
-          "operation": "modify",
-          "description": "Verify the calculateRiskScore function parameter types match the form inputs and backend interface. Ensure the function accepts isSmoker as boolean and returns a result compatible with the HealthRecord riskScore (number) and riskLevel (RiskLevel enum) fields. Fix any type mismatches."
+          "description": "Verify the router configuration and all four routes (Risk Predictor, X-Ray Analysis, Dashboard, History) are correctly wired for deployment. Ensure the shared layout components render correctly in production with proper asset loading."
         }
       ]
     }

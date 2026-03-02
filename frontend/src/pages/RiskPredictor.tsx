@@ -12,6 +12,7 @@ import { calculateRiskScore } from "@/lib/riskCalculator";
 import { Gender, RiskLevel } from "../backend";
 
 interface FormState {
+  patientName: string;
   age: string;
   gender: Gender;
   isSmoker: boolean;
@@ -23,6 +24,7 @@ interface FormState {
 }
 
 const defaultForm: FormState = {
+  patientName: "",
   age: "",
   gender: Gender.male,
   isSmoker: false,
@@ -58,6 +60,7 @@ export default function RiskPredictor() {
     if (!result) return;
     try {
       await addRecord.mutateAsync({
+        patientName: form.patientName.trim(),
         age: BigInt(Math.round(numericForm.age)),
         bmi: numericForm.bmi,
         bloodPressure: BigInt(Math.round(numericForm.bloodPressure)),
@@ -107,6 +110,16 @@ export default function RiskPredictor() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="patientName">Patient Name</Label>
+                <Input
+                  id="patientName"
+                  type="text"
+                  placeholder="e.g. John Doe"
+                  value={form.patientName}
+                  onChange={(e) => setForm({ ...form, patientName: e.target.value })}
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="age">Age (years)</Label>
@@ -287,6 +300,12 @@ export default function RiskPredictor() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-sm">
+                  {form.patientName.trim() && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Patient</span>
+                      <span className="font-medium">{form.patientName.trim()}</span>
+                    </div>
+                  )}
                   {[
                     { label: "Age", value: `${numericForm.age} years` },
                     { label: "BMI", value: numericForm.bmi.toFixed(1) },

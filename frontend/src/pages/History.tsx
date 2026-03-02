@@ -49,6 +49,9 @@ export default function History() {
           {sorted.map((record, idx) => {
             const date = new Date(Number(record.timestamp) / 1_000_000);
             const genderLabel = record.gender === Gender.male ? "Male" : "Female";
+            const displayName = record.patientName && record.patientName !== "unknown"
+              ? record.patientName
+              : null;
             const riskColor =
               record.riskLevel === RiskLevel.high
                 ? "border-l-health-red"
@@ -66,6 +69,9 @@ export default function History() {
                       </div>
                       <div>
                         <p className="font-medium text-sm">
+                          {displayName ? (
+                            <span>{displayName} &mdash; </span>
+                          ) : null}
                           {genderLabel}, {record.age.toString()} years old
                         </p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">

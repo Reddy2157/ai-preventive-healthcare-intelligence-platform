@@ -24,6 +24,7 @@ export const HealthRecord = IDL.Record({
   'glucose' : IDL.Nat,
   'gender' : Gender,
   'timestamp' : Time,
+  'patientName' : IDL.Text,
   'riskLevel' : RiskLevel,
   'riskScore' : IDL.Float64,
   'cholesterol' : IDL.Nat,
@@ -32,6 +33,7 @@ export const HealthRecord = IDL.Record({
 export const idlService = IDL.Service({
   'addRecord' : IDL.Func(
       [
+        IDL.Text,
         IDL.Nat,
         IDL.Float64,
         IDL.Nat,
@@ -67,6 +69,7 @@ export const idlFactory = ({ IDL }) => {
     'glucose' : IDL.Nat,
     'gender' : Gender,
     'timestamp' : Time,
+    'patientName' : IDL.Text,
     'riskLevel' : RiskLevel,
     'riskScore' : IDL.Float64,
     'cholesterol' : IDL.Nat,
@@ -75,6 +78,7 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     'addRecord' : IDL.Func(
         [
+          IDL.Text,
           IDL.Nat,
           IDL.Float64,
           IDL.Nat,
