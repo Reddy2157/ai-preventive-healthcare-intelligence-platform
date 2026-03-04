@@ -1,0 +1,147 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+
+    /* Clinical Navy/Teal palette */
+    --background: 0.97 0.008 220;
+    --foreground: 0.18 0.03 240;
+
+    --card: 1 0 0;
+    --card-foreground: 0.18 0.03 240;
+
+    --popover: 1 0 0;
+    --popover-foreground: 0.18 0.03 240;
+
+    --primary: 0.38 0.12 220;
+    --primary-foreground: 0.98 0 0;
+
+    --secondary: 0.93 0.015 220;
+    --secondary-foreground: 0.25 0.05 230;
+
+    --muted: 0.93 0.01 220;
+    --muted-foreground: 0.52 0.03 230;
+
+    --accent: 0.55 0.14 195;
+    --accent-foreground: 0.98 0 0;
+
+    --destructive: 0.58 0.22 25;
+    --destructive-foreground: 0.98 0 0;
+
+    --border: 0.88 0.015 220;
+    --input: 0.88 0.015 220;
+    --ring: 0.38 0.12 220;
+
+    --chart-1: 0.55 0.14 195;
+    --chart-2: 0.62 0.18 145;
+    --chart-3: 0.72 0.18 75;
+    --chart-4: 0.65 0.22 25;
+    --chart-5: 0.38 0.12 220;
+
+    --sidebar: 0.16 0.04 240;
+    --sidebar-foreground: 0.92 0.01 220;
+    --sidebar-primary: 0.55 0.14 195;
+    --sidebar-primary-foreground: 0.98 0 0;
+    --sidebar-accent: 0.22 0.05 240;
+    --sidebar-accent-foreground: 0.92 0.01 220;
+    --sidebar-border: 0.25 0.04 240;
+    --sidebar-ring: 0.55 0.14 195;
+
+    /* Risk colors */
+    --risk-low: 0.62 0.18 145;
+    --risk-moderate: 0.72 0.18 75;
+    --risk-high: 0.58 0.22 25;
+  }
+
+  .dark {
+    --background: 0.12 0.03 240;
+    --foreground: 0.92 0.01 220;
+
+    --card: 0.16 0.04 240;
+    --card-foreground: 0.92 0.01 220;
+
+    --popover: 0.18 0.04 240;
+    --popover-foreground: 0.92 0.01 220;
+
+    --primary: 0.55 0.14 195;
+    --primary-foreground: 0.12 0.03 240;
+
+    --secondary: 0.22 0.05 240;
+    --secondary-foreground: 0.92 0.01 220;
+
+    --muted: 0.22 0.05 240;
+    --muted-foreground: 0.62 0.03 230;
+
+    --accent: 0.55 0.14 195;
+    --accent-foreground: 0.12 0.03 240;
+
+    --destructive: 0.65 0.22 25;
+    --destructive-foreground: 0.98 0 0;
+
+    --border: 0.25 0.04 240;
+    --input: 0.25 0.04 240;
+    --ring: 0.55 0.14 195;
+
+    --sidebar: 0.12 0.03 240;
+    --sidebar-foreground: 0.92 0.01 220;
+    --sidebar-primary: 0.55 0.14 195;
+    --sidebar-primary-foreground: 0.98 0 0;
+    --sidebar-accent: 0.18 0.04 240;
+    --sidebar-accent-foreground: 0.92 0.01 220;
+    --sidebar-border: 0.22 0.05 240;
+    --sidebar-ring: 0.55 0.14 195;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Space Grotesk", sans-serif;
+  }
+}
+
+@layer utilities {
+  .risk-low {
+    color: oklch(var(--risk-low));
+  }
+  .risk-moderate {
+    color: oklch(var(--risk-moderate));
+  }
+  .risk-high {
+    color: oklch(var(--risk-high));
+  }
+  .bg-risk-low {
+    background-color: oklch(var(--risk-low) / 0.12);
+  }
+  .bg-risk-moderate {
+    background-color: oklch(var(--risk-moderate) / 0.12);
+  }
+  .bg-risk-high {
+    background-color: oklch(var(--risk-high) / 0.12);
+  }
+  .border-risk-low {
+    border-color: oklch(var(--risk-low) / 0.4);
+  }
+  .border-risk-moderate {
+    border-color: oklch(var(--risk-moderate) / 0.4);
+  }
+  .border-risk-high {
+    border-color: oklch(var(--risk-high) / 0.4);
+  }
+}
